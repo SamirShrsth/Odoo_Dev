@@ -13,3 +13,9 @@ newLetter = str(input("Replace With: "))
 string1 = string1.replace(replace, newLetter )
 
 print(string1)
+
+# indexing string[start : end : step]
+print(string1[ : 4]) # [start : end]
+print(string1[0 : : 2]) # [start : : step]
+print(string1[-4 : -1]) # [start(negative) : end(negative)]
+print(string1[ : :-1]) # reverse string
