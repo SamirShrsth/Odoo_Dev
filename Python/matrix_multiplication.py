@@ -1,6 +1,4 @@
 A = []
-
-
 B = []
 
 print("Enter values for Matrix A(3,3)")
