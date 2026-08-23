@@ -10,7 +10,7 @@ class Student:
         self.marks = marks if marks is not None else{}
         
     def add_mark(self, subject: str, score: float) -> None:
-        if 0 <= score >= 100:
+        if 0 <= score <= 100:
             self.marks[subject] = score
         else:
             print("Score must be within 0-100.")
@@ -39,7 +39,34 @@ class Student:
         return f"Student Id: {self.sid} \nStudent Name: {self.sname.capitalize()} \nStudent Marks: {self.marks}\n"
 
 students = []
-def add_student(students) -> None:
+
+
+def save_students(
+    students: list[Student],
+    file_path: str | Path = "./Python/GradeManagementSystem/students.json",
+):
+    data = [
+        {"name" : student.sname, "id": student.sid, "marks": student.marks}
+        for student in students
+    ]
+    path = Path(file_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=4), encoding="utf-8")
+
+
+def load_students(
+    file_path: str | Path = "./Python/GradeManagementSystem/students.json",
+) -> list[Student]:
+    path = Path(file_path)
+    if not path.exists():
+        return []
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return [
+        Student(item["name"], item["id"], item.get("marks", {}))
+        for item in data
+    ]
+
+def add_student(students: list[Student]) -> None:
     name = input("Enter Student Name: ").strip()
     while True:  
         student_id = input("Enter Student ID: ")
@@ -47,8 +74,8 @@ def add_student(students) -> None:
             print("Please enter an integer for the student id.")
             continue
         # s: Student
-        for s in students:
-            if int(student_id) == s.sid:
+        for student in students:
+            if int(student_id) == student.sid:
                 print("Student ID already exists. Try another one.")
                 break
         else:
@@ -56,38 +83,63 @@ def add_student(students) -> None:
     student = Student(name, int(student_id))
     students.append(student)
     print("Student Added Successfully!\n")
-    
-def display_students(students):
-    print("Students: \n")
-    for s in students:
-            print(s)
 
-def find_student(students):
+
+def add_mark_to_student(students) -> None:
+    student_id = int(input("Enter the student ID: "))
+    for student in students:
+        if student_id == student.sid:
+            print(student)
+            student_subject = input("Enter the subject: ")
+            student_score = float(input(f"Enter the marks for {student_subject}: "))
+            student.add_mark(student_subject, student_score)
+            print("Marks Added.")
+            return
+        print("Student ID doesn't Exist")
+
+def display_students(students) -> None:
+    print("Students: \n")
+    for student in students:
+            print(student)
+
+def find_student(students) -> None:
     while True:
         try:
-            search_choice = int(input("Search by Name or ID? (1, 2)"))
+            search_choice = int(input("Search by Name or ID? (1, 2): "))
         except ValueError:
             print("Please enter either 1 or 2.")
             continue
         if search_choice == 1:
             search_name = input("Please enter the Student Name: ")
-            for s in students:
-                if search_name == s.sname:
+            for student in students:
+                if search_name == student.sname:
                     print("Student Found: \n")
-                    print(s)
-                    main()
-                else:
-                    print("Student Not Found")
-                    break
-        
-    
-
+                    print(student)
+                    # main()
+                    return
+            print("Student Not Found. ")
+                
+        elif search_choice == 2:
+            search_id = int(input("Enter the student ID: "))
+            for student in students:
+                if search_id == student.sid:
+                    print("Student Found: \n")
+                    print(student)
+                    return
+                    # main()
+            print("Student Not Found. ")
+                
+        else:
+            print("Invalid Option")
+            
 def main():
+    students.extend(load_students())
     while True:
         print("1. Add Student ")
         print("2. Display Students ")
         print("3. Find Student ")
-        print("4. Exit ")
+        print("4. Add Marks ")
+        print("5. Exit ")
         
         try:
             choice = int(input("Enter your choice: "))
@@ -101,7 +153,11 @@ def main():
         elif choice == 3:
             find_student(students)
         elif choice == 4:
-            exit()
+            add_mark_to_student(students)
+        elif choice == 5:
+            save_students(students)
+            print("Students saved successfully. Goodbye!")
+            return
         else:
             print("Invalid Option. Choose from 1-5.")
 main()
