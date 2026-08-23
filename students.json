@@ -1,0 +1,18 @@
+[
+    {
+        "name": "Samir",
+        "id": 1,
+        "marks": {
+            "Mathematics": 90.0,
+            "Science": 80.0
+        }
+    },
+    {
+        "name": "Naayu",
+        "id": 2,
+        "marks": {
+            "Mathematics": 100.0,
+            "Science": 75.0
+        }
+    }
+]
