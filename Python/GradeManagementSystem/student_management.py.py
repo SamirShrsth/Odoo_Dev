@@ -41,19 +41,14 @@ class Student:
 students = []
 
 
-def save_students(
-    students: list[Student],
-    file_path: str | Path = "./Python/GradeManagementSystem/students.json",
-):
+def save_students(students : list[Student], file_path: str | Path = "./Python/GradeManagementSystem/students.json"):
     data = [
-        {"name" : student.sname, "id": student.sid, "marks": student.marks}
+        {"name": student.sname, "id": student.sid, "marks": student.marks}
         for student in students
     ]
     path = Path(file_path)
-    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=4), encoding="utf-8")
-
-
+    
 def load_students(
     file_path: str | Path = "./Python/GradeManagementSystem/students.json",
 ) -> list[Student]:
@@ -86,16 +81,24 @@ def add_student(students: list[Student]) -> None:
 
 
 def add_mark_to_student(students) -> None:
-    student_id = int(input("Enter the student ID: "))
-    for student in students:
-        if student_id == student.sid:
-            print(student)
-            student_subject = input("Enter the subject: ")
-            student_score = float(input(f"Enter the marks for {student_subject}: "))
-            student.add_mark(student_subject, student_score)
-            print("Marks Added.")
-            return
+    while True:
+        try:
+            student_id = int(input("Enter the student ID: "))
+        except ValueError:
+            print("Please enter an integer.")
+            continue
+            
+        for student in students:
+            if student_id == student.sid:
+                print(student)
+                student_subject = input("Enter the subject: ")
+                student_score = float(input(f"Enter the marks for {student_subject}: "))
+                student.add_mark(student_subject, student_score)
+                print("Marks Added.")
+                return
         print("Student ID doesn't Exist")
+        continue
+        
 
 def display_students(students) -> None:
     print("Students: \n")
